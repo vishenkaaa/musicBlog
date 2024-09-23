@@ -12,12 +12,13 @@ class CommentController extends Controller
     {
         $request->validate([
             'comment' => 'required',
+            'post_id' => 'required|exists:posts,id',
         ]);
 
         Comment::create([
             'comment' => $request->comment,
             'user_id' => auth()->id(), 
-            'post_id' => $post->id,
+            'post_id' => $request->post_id,
         ]);
 
         return redirect()->back();

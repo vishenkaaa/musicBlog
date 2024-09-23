@@ -24,7 +24,7 @@ class PostController extends Controller
     {
         $request->validate([
             'title' => 'required',
-            'content' => 'required',
+            'body' => 'required',
             'image' => 'required|image',
             'category_id' => 'required|exists:categories,id',
         ]);
@@ -33,7 +33,7 @@ class PostController extends Controller
 
         Post::create([
             'title' => $request->title,
-            'content' => $request->body,
+            'body' => $request->body,
             'image' => $imagePath,
             'user_id' => auth()->id(),
             'category_id' => $request->category_id,
@@ -52,7 +52,7 @@ class PostController extends Controller
     {
         $request->validate([
             'title' => 'required',
-            'content' => 'required',
+            'body' => 'required',
             'category_id' => 'required|exists:categories,id',
         ]);
 
@@ -61,7 +61,7 @@ class PostController extends Controller
             $post->image = $imagePath;
         }
 
-        $post->update($request->only(['title', 'content', 'category_id']));
+        $post->update($request->only(['title', 'body', 'category_id']));
 
         return redirect()->route('posts.index');
     }
