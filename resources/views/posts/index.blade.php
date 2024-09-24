@@ -15,8 +15,9 @@
                         <th>Назва</th>
                         <th>Категорія</th>
                         <th>Автор</th>
-                        <th>Контент</th> <!-- Додано -->
+                        <th>Контент</th> 
                         <th>Дії</th>
+                        <th>Лайки</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -27,7 +28,7 @@
                             <td>{{ $post->title }}</td>
                             <td>{{ $post->category->name }}</td>
                             <td>{{ $post->user->name }}</td>
-                            <td>{{ Str::limit($post->body, 100) }}</td> <!-- Відображення частини контенту -->
+                            <td>{{ Str::limit($post->body, 100) }}</td>
                             <td>
                                 <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-warning">Редагувати</a>
                                 <form action="{{ route('posts.destroy', $post->id) }}" method="POST" style="display:inline-block;">
@@ -37,25 +38,57 @@
                                 </form>
                             </td>
                             <td>
-                                @if(Auth::check())
+                                <span>{{ $post->likes->count() }} Лайків</span>
+                                
+                                    @if($post->likes()->where('user_id', auth()->id())->exists())
                                     <form action="{{ route('posts.like', $post->id) }}" method="POST">
-                                        @csrf
-                                        <button type="submit">{{ $post->likes()->where('user_id', auth()->id())->exists() ? 'Unlike' : 'Like' }}</button>
-                                    </form>
-                                @endif
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger">Unlike</button>
+                                        </form>
+                                    @else
+                                        <form action="{{route('posts.unlike', $post->id)}}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-success">Like</button>
+                                        </form>
+                                    @endif
+                                
                             </td>
-                            <td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="7">
+                                <h5>Коментарі:</h5>
+                                @if($post->comments->count())
+                                    <ul>
+                                        @foreach($post->comments as $comment)
+                                            <li>
+                                                <strong>{{ $comment->user->name }}</strong>: {{ $comment->comment }}
+                                                <a href="{{ route('comments.edit', $comment->id) }}" class="btn btn-sm btn-warning">Редагувати</a>
+                                                <form action="{{ route('comments.destroy', $comment->id) }}" method="POST" style="display:inline-block;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger btn-sm">Видалити</button>
+                                                </form>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                @else
+                                    <p>Немає коментарів.</p>
+                                @endif
+                                
                                 <form action="{{ route('comments.store') }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="post_id" value="{{ $post->id }}">
-                                    <div>
-                                        <label for="comment">Ваш коментар</label>
-                                        <textarea name="comment" id="comment">{{ old('comment') }}</textarea>
+                                    <div class="mb-3">
+                                        <label for="comment">Ваш коментар:</label>
+                                        <textarea name="comment" id="comment" class="form-control">{{ old('comment') }}</textarea>
                                     </div>
-                                    <button type="submit">Додати коментар</button>
+                                    <button type="submit" class="btn btn-primary">Додати коментар</button>
                                 </form>
                             </td>
                         </tr>
+
                     @endforeach
                 </tbody>
             </table>
