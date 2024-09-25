@@ -4,21 +4,29 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\Category;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $posts = Post::with('user', 'category')->get();
-        return view('posts.index', compact('posts'));
+        $posts = Post::with('likes', 'comments', 'category', 'user')->get();
+        $users = User::all();
+
+        $selected_user_id = $request->input('selected_user_id', $users->first()->id ?? null);
+
+        return view('posts.index', compact('posts', 'users', 'selected_user_id'));
     }
 
     public function create()
     {
-        $categories = Category::all();
-        return view('posts.create', compact('categories'));
+        $users = User::all(); 
+        $categories = Category::all(); 
+
+        return view('posts.create', compact('users', 'categories'));
     }
+
 
     public function store(Request $request)
     {
@@ -35,7 +43,8 @@ class PostController extends Controller
             'title' => $request->title,
             'body' => $request->body,
             'image' => $imagePath,
-            'user_id' => auth()->id(),
+            'user_id' => $request->user_id,
+            //'user_id' => auth()->id(),
             'category_id' => $request->category_id,
         ]);
 
