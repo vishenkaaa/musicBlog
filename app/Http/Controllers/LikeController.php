@@ -23,7 +23,6 @@ class LikeController extends Controller
 
     public function destroy(Request $request, Post $post)
     {
-        // Використовуємо переданий user_id, щоб знайти відповідний лайк
         $like = $post->likes()->where('user_id', $request->user_id)->first();
 
         if ($like) {

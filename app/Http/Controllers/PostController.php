@@ -27,7 +27,6 @@ class PostController extends Controller
         return view('posts.create', compact('users', 'categories'));
     }
 
-
     public function store(Request $request)
     {
         $request->validate([

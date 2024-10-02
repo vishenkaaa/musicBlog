@@ -47,7 +47,7 @@
                             <td><img src="{{ asset('storage/' . $post->image) }}" width="100" alt="Image"></td>
                             <td>{{ $post->title }}</td>
                             <td>{{ $post->category->name }}</td>
-                            <td>{{ $post->user->name }}</td>
+                            <td>{{ $post->user->surname}} {{$post->user->name }}</td>
                             <td>{{ Str::limit($post->body, 50) }}</td>
                             <td>
                                 <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-warning btn-sm">Edit</a>
@@ -59,9 +59,7 @@
                             </td>
                             <td>
                                 <span>{{ $post->likes->count() }} Likes</span>
-                                <!-- Like/Unlike Forms -->
                                 @if($post->likes->where('user_id', $selected_user_id)->count())
-                                    <!-- Unlike form -->
                                     <form action="{{ route('posts.unlike', $post->id) }}" method="POST" class="like-form" style="display:inline-block;">
                                         @csrf
                                         @method('DELETE')
@@ -69,7 +67,6 @@
                                         <button type="submit" class="btn btn-sm btn-danger">Unlike</button>
                                     </form>
                                 @else
-                                    <!-- Like form -->
                                     <form action="{{ route('posts.like', $post->id) }}" method="POST" class="like-form" style="display:inline-block;">
                                         @csrf
                                         <input type="hidden" name="user_id" value="{{ $selected_user_id }}">
@@ -86,7 +83,7 @@
                                     <ul>
                                         @foreach($post->comments as $comment)
                                             <li>
-                                                <strong>{{ $comment->user->name }}</strong>: {{ $comment->comment }}
+                                                <strong>{{ $post->user->surname}} {{$post->user->name }}</strong>: {{ $comment->comment }}
                                                 <a href="{{ route('comments.edit', $comment->id) }}" class="btn btn-sm btn-warning">Edit</a>
                                                 <form action="{{ route('comments.destroy', $comment->id) }}" method="POST" style="display:inline-block;">
                                                     @csrf
@@ -103,7 +100,7 @@
                                 <form action="{{ route('comments.store') }}" method="POST" class="comment-form">
                                     @csrf
                                     <input type="hidden" name="post_id" value="{{ $post->id }}">
-                                    <input type="hidden" name="user_id" class="user-id-hidden">
+                                    <input type="hidden" name="user_id" value="{{ $selected_user_id }}">
                                     
                                     <div class="mb-3">
                                         <label for="comment" class="form-label">Your comment:</label>
@@ -112,6 +109,7 @@
                                     
                                     <button type="submit" class="btn btn-primary">Add Comment</button>
                                 </form>
+
                             </td>
                         </tr>
                     @endforeach
@@ -126,26 +124,10 @@
         function updatePosts() {
             var userId = document.getElementById('global_user_id').value;
             var selectedUserName = document.querySelector(`#global_user_id option[value="${userId}"]`).text;
-            
-            // Оновити ім'я вибраного користувача
+        
             document.getElementById('selected-user-name').textContent = selectedUserName;
-
-            // Перенаправлення на нову URL
             window.location.href = `/posts?selected_user_id=${userId}`;
         }
-
-        document.getElementById('global_user_id').addEventListener('change', function() {
-            let selectedUserId = this.value;
-            var selectedUserName = this.options[this.selectedIndex].text;
-
-            // Оновлення значення для лайків
-            document.querySelectorAll('.user-id-hidden').forEach(function(hiddenInput) {
-                hiddenInput.value = selectedUserId;
-            });
-
-            // Оновити ім'я вибраного користувача
-            document.getElementById('selected-user-name').textContent = selectedUserName;
-        });
     </script>
 
 @endsection

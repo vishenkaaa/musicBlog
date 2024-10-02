@@ -13,6 +13,7 @@ class CommentController extends Controller
         $request->validate([
             'comment' => 'required',
             'post_id' => 'required|exists:posts,id',
+            'user_id' => 'required|exists:users,id',
         ]);
 
         Comment::create([

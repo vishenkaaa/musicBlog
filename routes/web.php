@@ -17,6 +17,5 @@ Route::resource('users', UserController::class);
 Route::resource('comments', CommentController::class);
 Route::resource('likes', LikeController::class);
 
-Route::get('/create', [PostController::class, 'create']);
 Route::post('/posts/{post}/like', [LikeController::class, 'store'])->name('posts.like');
 Route::delete('/posts/{post}/unlike', [LikeController::class, 'destroy'])->name('posts.unlike'); 
