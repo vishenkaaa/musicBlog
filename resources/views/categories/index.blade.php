@@ -16,17 +16,14 @@
                 </tr>
             </thead>
             <tbody>
+                @include('includes.modal_confirm_delete')
                 @foreach($categories as $category)
                     <tr>
                         <td>{{ $category->id }}</td>
                         <td>{{ $category->name }}</td>
                         <td>
                             <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                            <form action="{{ route('categories.destroy', $category->id) }}" method="POST" style="display:inline-block;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </form>
+                            <button class="btn btn-danger btn-sm" onclick="confirmDelete('/categories/{{ $category->id }}')">Delete</button>
                         </td>
                     </tr>
                 @endforeach

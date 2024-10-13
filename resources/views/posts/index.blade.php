@@ -41,21 +41,18 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @include('includes.modal_confirm_delete')
                     @foreach($posts as $post)
                         <tr>
                             <td>{{ $post->id }}</td>
-                            <td><img src="{{ asset('storage/' . $post->image) }}" width="100" alt="Image"></td>
+                            <td><img src="{{ asset($post->image) }}" width="100" alt="Image"></td>
                             <td>{{ $post->title }}</td>
                             <td>{{ $post->category->name }}</td>
                             <td>{{ $post->user->surname}} {{$post->user->name }}</td>
                             <td>{{ Str::limit($post->body, 50) }}</td>
                             <td>
                                 <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                <form action="{{ route('posts.destroy', $post->id) }}" method="POST" style="display:inline-block;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                </form>
+                                <button class="btn btn-danger btn-sm" onclick="confirmDelete('/posts/{{ $post->id }}')">Delete</button>
                             </td>
                             <td>
                                 <span>{{ $post->likes->count() }} Likes</span>
@@ -82,15 +79,11 @@
                                 @if($post->comments->count())
                                     <ul>
                                         @foreach($post->comments as $comment)
-                                            <li>
-                                                <strong>{{ $post->user->surname}} {{$post->user->name }}</strong>: {{ $comment->comment }}
-                                                <a href="{{ route('comments.edit', $comment->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                                                <form action="{{ route('comments.destroy', $comment->id) }}" method="POST" style="display:inline-block;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                                </form>
-                                            </li>
+                                        <li>
+                                            <strong>{{ $post->user->surname }} {{ $post->user->name }}</strong>: {{ $comment->comment }}
+                                            <a href="{{ route('comments.edit', $comment->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                            <button class="btn btn-danger btn-sm" onclick="confirmDelete('/comments/{{ $comment->id }}')">Delete</button>
+                                        </li>
                                         @endforeach
                                     </ul>
                                 @else
@@ -119,6 +112,8 @@
             <p>No posts available</p>
         @endif
     </div>
+
+
 
     <script>
         function updatePosts() {
